@@ -1,0 +1,38 @@
+AllCops:
+  TargetRubyVersion: 3.3.5
+  NewCops: enable
+
+Metrics/AbcSize:
+  Max: 54
+
+Metrics/CyclomaticComplexity:
+  Max: 13
+
+Metrics/ClassLength:
+  Max: 183
+
+Metrics/MethodLength:
+  Max: 81
+
+Metrics/ModuleLength:
+  Max: 130
+
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - 'spec/**/*'
+
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Naming/InclusiveLanguage:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 120

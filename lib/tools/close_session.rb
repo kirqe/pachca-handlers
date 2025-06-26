@@ -3,7 +3,7 @@
 require_relative '../internal/tools/base_tool'
 
 class CloseSession < BaseTool
-  required :context, String, doc: 'Context wether session with usercan be closed'
+  required :context, String, doc: 'Context whether session with user can be closed'
 
   def self.call(context:, runtime_context: {})
     _ = context

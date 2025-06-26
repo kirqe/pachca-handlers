@@ -27,7 +27,7 @@ class BaseHandler
     end
 
     def no_steps?
-      steps.nil? || steps.empty?
+      steps.empty?
     end
 
     def step(key, &)
@@ -39,7 +39,7 @@ class BaseHandler
     def assistant(value = nil)
       return @assistant unless value
 
-      @assistant = value || false
+      @assistant = value
     end
 
     def assistant?

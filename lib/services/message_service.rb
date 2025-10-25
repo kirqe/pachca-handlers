@@ -8,12 +8,23 @@ class MessageService
 
   def deliver(message, buttons = [])
     sleep 0.1
-    @client.create_message({ message: {
-                             entity_type: @event.entity_type,
-                             entity_id: @event.entity_id,
-                             content: message,
-                             buttons: buttons
-                           } })
+    payload = build_message_payload(message, buttons)
+    @client.create_message(payload)
+  end
+
+  def deliver_with_id(message, buttons = [])
+    sleep 0.1
+    payload = build_message_payload(message, buttons)
+    response = @client.create_message(payload)
+    response.body.dig('data', 'id')
+  end
+
+  def update_message(message_id, content: nil, buttons: [])
+    sleep 0.1
+    body = { message: {} }
+    body[:message][:content] = content unless content.nil?
+    body[:message][:buttons] = buttons unless buttons.nil?
+    @client.update_message(message_id, body)
   end
 
   def post_result(result)
@@ -25,5 +36,16 @@ class MessageService
     end
 
     deliver(message)
+  end
+
+  private
+
+  def build_message_payload(message, buttons)
+    { message: {
+      entity_type: @event.entity_type,
+      entity_id: @event.entity_id,
+      content: message,
+      buttons: buttons
+    } }
   end
 end

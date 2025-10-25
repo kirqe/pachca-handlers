@@ -18,6 +18,8 @@ class EventProcessor
   protected
 
   def handle_handler_command(command)
+    @session_service.cancel_existing_sessions
+
     session = @session_service.find_or_create_session
     return unless session&.valid_user?(@event.user_id)
 

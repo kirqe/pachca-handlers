@@ -53,7 +53,7 @@ class BaseHandler
   end
 
   def perform
-    raise NotImplementedError
+    nil
   end
 
   protected

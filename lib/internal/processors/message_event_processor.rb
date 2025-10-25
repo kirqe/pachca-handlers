@@ -31,8 +31,8 @@ class MessageEventProcessor < EventProcessor
 
   def handle_command(command)
     case command
-    # when 'start'
-    #   return handle_start_command
+    when 'start'
+      return handle_start_command
     when 'cancel', 'stop'
       return handle_cancel_command
     end
@@ -43,7 +43,7 @@ class MessageEventProcessor < EventProcessor
   def handle_start_command
     commands = HandlersRegistry.all
     buttons = commands.map do |_, klass|
-      [{ text: klass.title, data: "cmd:#{klass.command}:#{@event.entity_type}:#{@event.entity_id}" }]
+      [{ text: klass.title, data: "cmd:#{klass.command}" }]
     end
 
     @message_service.deliver(I18n.t('messages.available_commands'), buttons)

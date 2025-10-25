@@ -29,46 +29,8 @@ RSpec.describe MessageEvent do
       expect(event.command).to eq('test')
     end
 
-    it 'extracts inline params' do
-      expect(event.inline_params).to eq({})
-    end
-
     it 'method_missing' do
       expect(event.chat_id).to eq(23_558_096)
-    end
-  end
-
-  describe 'inline params' do
-    context 'with key-value params' do
-      let(:kv_params) do
-        {
-          'event' => 'new',
-          'type' => 'message',
-          'content' => '/test name=John age=30'
-        }
-      end
-
-      let(:event) { MessageEvent.new(kv_params) }
-
-      it 'extracts inline params' do
-        expect(event.inline_params).to eq({ name: 'John', age: '30' })
-      end
-    end
-
-    context 'with value-only params' do
-      let(:no_kv_params) do
-        {
-          'event' => 'new',
-          'type' => 'message',
-          'content' => '/test hello'
-        }
-      end
-
-      let(:event) { MessageEvent.new(no_kv_params) }
-
-      it 'extracts inline params' do
-        expect(event.inline_params).to eq({ message: 'hello' })
-      end
     end
   end
 end

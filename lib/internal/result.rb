@@ -26,6 +26,7 @@ class Result
   end
 
   def self.error(errors)
+    errors = [errors] unless errors.is_a?(Array)
     new(nil, success: false, errors: errors)
   end
 end

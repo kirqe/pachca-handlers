@@ -16,4 +16,12 @@ class PachcaClient < BaseClient
   def create_message(message)
     post('messages', message)
   end
+
+  def update_message(message_id, message)
+    put("messages/#{message_id}", message)
+  end
+
+  def get_message(message_id)
+    get("messages/#{message_id}")
+  end
 end

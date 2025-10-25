@@ -10,30 +10,34 @@ class SessionService
   end
 
   def find_or_create_session
-    params = {
-      user_id: event.user_id,
-      chat_id: event.chat_id,
-      entity_type: event.entity_type,
-      entity_id: event.entity_id,
-      status: Session::STATUSES[:active]
-    }
-
-    session = Session.find(params)
+    session = find_session
     return session if session
 
-    params[:command] = event.command
+    params = base_params.merge(command: event.command)
     Session.create(params)
   end
 
   def find_session
-    params = {
-      user_id: event.user_id,
-      chat_id: event.chat_id,
-      entity_type: event.entity_type,
-      entity_id: event.entity_id,
+    Session.find(base_params)
+  end
+
+  def cancel_existing_sessions
+    Session.where(
+      user_id: @event.user_id,
+      chat_id: @event.chat_id,
+      status: Session::STATUSES[:active]
+    ).update(status: Session::STATUSES[:finished])
+  end
+
+  private
+
+  def base_params
+    {
+      user_id: @event.user_id,
+      chat_id: @event.chat_id,
+      entity_type: @event.entity_type,
+      entity_id: @event.entity_id,
       status: Session::STATUSES[:active]
     }
-
-    Session.find(params)
   end
 end

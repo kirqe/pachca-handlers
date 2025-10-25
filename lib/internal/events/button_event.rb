@@ -8,20 +8,34 @@ class ButtonEvent < Event
     @params['data']
   end
 
+  def verb
+    data.split(':')[0]
+  end
+
   def command?
-    data.split(':')[0] == 'cmd'
+    verb == 'cmd'
   end
 
   def command
+    return unless command?
+
     data.split(':')[1]
   end
 
   def entity_type
-    data.split(':')[2]
+    @params['entity_type'] || 'discussion'
   end
 
   def entity_id
-    data.split(':')[3]
+    @params['entity_id'] || @params['chat_id']
+  end
+
+  def chat_id
+    @params['chat_id']
+  end
+
+  def content
+    ''
   end
 
   def processor_class

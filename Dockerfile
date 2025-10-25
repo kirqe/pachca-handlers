@@ -1,7 +1,7 @@
 FROM ruby:3.3.8
 
 RUN apt-get update -qq && \
-  apt-get install -y build-essential libsqlite3-dev sqlite3 libssl-dev libffi-dev
+    apt-get install -y build-essential libsqlite3-dev sqlite3 libssl-dev libffi-dev
 
 WORKDIR /app
 COPY Gemfile Gemfile.lock ./

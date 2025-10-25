@@ -53,7 +53,7 @@ class StepsDataManager
   def prepare
     steps = handler_class.steps
 
-    @data = { @command => { steps: {} } }
+    @data = { @command => { steps: {}, emitted_output: false } }
     steps.each do |step|
       @data[@command][:steps][step.key.to_sym] = {
         intro_shown: false,
@@ -66,7 +66,8 @@ class StepsDataManager
         @data[@command][:steps][step.key.to_sym][:fields][field.key.to_sym] = {
           visited: false,
           value: nil,
-          name: field.name
+          name: field.name,
+          prompt_message_id: nil
         }
       end
     end
@@ -108,19 +109,22 @@ class StepsDataManager
     each_field(step) do |field, field_obj|
       return [step, field] unless field_obj&.dig(:visited)
     end
+
+    nil
   end
 
   def step_completed?(step_obj)
     step_obj[:step_completed] || step_obj[:skipped]
   end
 
+  def field_filled?(step_key, field_key)
+    field_obj = field(step_key, field_key)
+    field_obj&.dig(:visited) && !field_obj[:value].nil?
+  end
+
   def field_value(step_key, field_key)
     field_obj = field(step_key, field_key)
     field_obj[:value]
-  end
-
-  def field_filled?(step_key, field_key)
-    !!field_value(step_key, field_key)
   end
 
   def update_field!(step_key, field_key, value)
@@ -145,6 +149,26 @@ class StepsDataManager
     step_obj&.dig(:fields, field_key.to_sym)
   end
 
+  def update_field_prompt_message_id!(step_key, field_key, message_id)
+    field_obj = field(step_key, field_key)
+    return unless field_obj
+
+    field_obj[:prompt_message_id] = message_id
+    save
+  end
+
+  def field_prompt_message_id(step_key, field_key)
+    field(step_key, field_key)&.dig(:prompt_message_id)
+  end
+
+  def move_prompt_message_id!(from_step_key, from_field_key, to_step_key, to_field_key)
+    id = field_prompt_message_id(from_step_key, from_field_key)
+    return unless id
+
+    update_field_prompt_message_id!(to_step_key, to_field_key, id)
+    update_field_prompt_message_id!(from_step_key, from_field_key, nil)
+  end
+
   def serialize
     data.map do |command, data|
       {
@@ -162,6 +186,15 @@ class StepsDataManager
         end
       }
     end
+  end
+
+  def mark_emitted_output!
+    data[@command.to_sym][:emitted_output] = true
+    save
+  end
+
+  def emitted_output?
+    !!data[@command.to_sym][:emitted_output]
   end
 
   private

@@ -5,7 +5,7 @@ require_relative 'evaluated_field'
 class Field
   include EvaluatedField
 
-  attr_reader :key, :options, :errors
+  attr_reader :key, :errors
 
   def initialize(key:)
     @key = key
@@ -31,10 +31,25 @@ class Field
     @validations = value
   end
 
+  # options to pick from instead of text input
+  def options(value = nil)
+    return effective_options unless value
+
+    @options = value
+  end
+
   def callback(proc = nil, &block)
     return @callback unless proc || block_given?
 
     @callback = proc || block
+  end
+
+  def go_back_to(step_key)
+    @go_back_to = step_key
+  end
+
+  def go_back_target
+    @go_back_to
   end
 
   def validate(value)
@@ -61,13 +76,13 @@ class Field
   def valid?
     @errors.empty?
   end
-end
 
-# TODO: Add options with buttons mb?
-# class HandlerField::ValueOption
-#   def initialize(key:, name:, value:)
-#     @key = key
-#     @name = name
-#     @value = value
-#   end
-# end
+  private
+
+  # auto-inject back button when go_back_to is defined
+  def effective_options
+    return @options unless @go_back_to
+
+    (@options || []) + [I18n.t('buttons.back')]
+  end
+end

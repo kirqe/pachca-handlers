@@ -15,18 +15,15 @@ class EchoHandler < BaseHandler
         ->(value) { [!value.empty?, 'Message cannot be empty'] },
         ->(value) { [value.length <= 3, 'Message cannot be longer than 3 characters'] }
       ]
-      callback ->(ctx) { puts "Field callback with context #{ctx.inspect}" }
+      callback do |ctx|
+        Result.success("Echo: #{ctx[:value]}")
+      end
     end
-    callback { puts 'Step callback' }
+    callback { nil }
   end
 
   step :thanks do
     intro 'Thank you for using the Echo handler.'
-    callback { puts 'Callback' }
-  end
-
-  def perform
-    message = field_value(:echo, :message)
-    Result.success("Echo: #{message}")
+    callback { nil }
   end
 end

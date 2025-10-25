@@ -13,15 +13,17 @@ class AssistantSessionFlow
     return unless session
 
     session.initialize_chat_data!
-
     input = @event.content.strip
-    return if input.empty?
+
+    if input.empty?
+      @message_service.deliver(I18n.t('messages.assistant_welcome'))
+      return
+    end
 
     save_user_message(input)
 
     assistant = Assistant.new(chat_data_manager: session.chat_data_manager)
-
-    result = assistant.ask(@event.content, context: { session: session })
+    result = assistant.ask(input, context: { session: session })
 
     save_assistant_message(result)
 

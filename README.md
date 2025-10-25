@@ -1,6 +1,6 @@
 # PachcaHandlers
 
-Base project for creating simple bots(?) or short commands for Pachca messenger
+Base project for creating simple bots or short commands for Pachca messenger
 
 ## Configuration
 
@@ -24,21 +24,14 @@ class EchoHandler < BaseHandler
       description 'The message to echo back'
       validations [
         ->(value) { [!value.empty?, 'Message cannot be empty'] },
-        ->(value) { [value.length >= 3, 'Message cannot be less than 3 characters'] }
+        ->(value) { [value.length <= 3, 'Message cannot be longer than 3 characters'] }
       ]
-      callback { puts 'Field callback' }
+      callback { |ctx|
+        Result.success("Echo: #{ctx[:value]}")
+      }
     end
-    callback { puts 'Step callback' }
-  end
-
-  step :thanks do
-    intro 'Thank you for using the Echo handler.'
-    callback { puts 'Step callback' }
-  end
-
-  def perform
-    message = field_value(:echo, :message)
-    HandlerResult.success("Echo: #{message}")
   end
 end
 ```
+
+<img src="g.gif">

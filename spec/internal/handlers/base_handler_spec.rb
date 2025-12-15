@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative '../../../lib/internal/handlers/base_handler'
+require_relative '../../../lib/pachca_handlers/handlers/base_handler'
 
-RSpec.describe BaseHandler do
-  let(:handler) { BaseHandler.new }
+RSpec.describe PachcaHandlers::Handlers::BaseHandler do
+  let(:handler) { PachcaHandlers::Handlers::BaseHandler.new }
 
-  echo_handler = Class.new(BaseHandler) do
+  echo_handler = Class.new(PachcaHandlers::Handlers::BaseHandler) do
     title 'Echo'
     command 'echo'
 
@@ -24,7 +24,7 @@ RSpec.describe BaseHandler do
 
     def perform
       message = field_value(:step1, :message)
-      Result.success("Echo: #{message}")
+      PachcaHandlers::Result.success("Echo: #{message}")
     end
   end
 

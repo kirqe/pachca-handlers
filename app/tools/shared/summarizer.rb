@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../lib/internal/clients/llm_client'
+require_relative '../../../lib/pachca_handlers/integrations/llm_client'
 
 module Summarizer
   MAX_TOKENS = 25_000
@@ -17,12 +17,13 @@ module Summarizer
   end
 
   def self.summarize(text)
-    client = LLMClient.new
+    client = PachcaHandlers::Integrations::LLMClient.new
     response = client.chat_completion(
       [
         { role: 'system', content: 'Ты интеллигентный ассистент, который дает краткое описание текста (summary)' },
         { role: 'user', content: "Суммаризируй этот текст:\n\n#{text}" }
-      ]
+      ],
+      tools: []
     )
 
     response.choices.first.message.content&.strip || ''

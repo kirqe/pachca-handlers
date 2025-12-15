@@ -3,39 +3,43 @@
 require_relative 'field'
 require_relative 'evaluated_field'
 
-class Step
-  include EvaluatedField
+module PachcaHandlers
+  module Flow
+    class Step
+      include EvaluatedField
 
-  attr_reader :key, :fields
+      attr_reader :key, :fields
 
-  def initialize(key: nil)
-    @key = key
-    @fields = []
-  end
+      def initialize(key: nil)
+        @key = key
+        @fields = []
+      end
 
-  def intro(text = nil)
-    return @intro unless text
+      def intro(text = nil)
+        return @intro unless text
 
-    @intro = text.is_a?(Proc) ? text : -> { text }
-  end
+        @intro = text.is_a?(Proc) ? text : -> { text }
+      end
 
-  def callback(proc = nil, &block)
-    return @callback unless proc || block_given?
+      def callback(proc = nil, &block)
+        return @callback unless proc || block_given?
 
-    @callback = proc || block
-  end
+        @callback = proc || block
+      end
 
-  def field(key, &)
-    f = Field.new(key: key)
-    f.instance_eval(&)
-    fields << f
-  end
+      def field(key, &block)
+        f = Field.new(key: key)
+        f.instance_eval(&block) if block
+        fields << f
+      end
 
-  def show_intro?
-    !!@intro
-  end
+      def show_intro?
+        !!@intro
+      end
 
-  def complete?(session)
-    fields.all? { |f| session.steps_data_manager.field_filled?(key, f.key) }
+      def complete?(session)
+        fields.all? { |f| session.steps_data_manager.field_filled?(key, f.key) }
+      end
+    end
   end
 end

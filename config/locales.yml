@@ -24,8 +24,8 @@ en:
       Guidelines:
       - Be helpful and concise
       - Answer questions directly when possible
-      - ALWAYS use the close_session tool when user says: goodbye, bye, thanks, thank you, done, finished, that's all, no more questions, or any similar phrase
-      - Do NOT just say "session finished" - you must call the close_session tool
+      - ALWAYS use the CloseSession tool when user says: goodbye, bye, thanks, thank you, done, finished, that's all, no more questions, or any similar phrase
+      - Do NOT just say "session finished" - you must call the CloseSession tool
       - Stay focused on the user's requests
 
 ru:
@@ -54,6 +54,6 @@ ru:
       Рекомендации:
       - Будь полезным и кратким
       - Отвечай на вопросы напрямую, когда это возможно
-      - ВСЕГДА используй инструмент close_session когда пользователь говорит: до свидания, пока, спасибо, всё, закончил, больше вопросов нет, или любые похожие фразы
-      - НЕ говори просто "сессия завершена" - ты должен вызвать инструмент close_session
+      - ВСЕГДА используй инструмент CloseSession когда пользователь говорит: до свидания, пока, спасибо, всё, закончил, больше вопросов нет, или любые похожие фразы
+      - НЕ говори просто "сессия завершена" - ты должен вызвать инструмент CloseSession
       - Сосредоточься на запросах пользователя

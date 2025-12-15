@@ -1,27 +1,26 @@
 # frozen_string_literal: true
 
-require_relative '../../lib/internal/handlers/base_handler'
-require_relative '../../lib/internal/clients/base_client'
+require 'json'
+require_relative '../../lib/pachca_handlers/handlers/base_handler'
+require_relative '../../lib/pachca_handlers/integrations/base_client'
 
-class NetworkHandler < BaseHandler
+class NetworkHandler < PachcaHandlers::Handlers::BaseHandler
   title 'Network Call'
   command 'network'
 
   step :api_call do
     callback do |ctx|
-      begin
-        response = BaseClient.get('https://jsonplaceholder.typicode.com/posts/1')
+      response = PachcaHandlers::Integrations::BaseClient.get('https://jsonplaceholder.typicode.com/posts/1')
 
-        if response.success?
-          data = response.body
-          formatted_response = ctx[:handler].send(:format_response, data)
-          Result.success(formatted_response)
-        else
-          Result.error("Failed to fetch data: HTTP #{response.status}")
-        end
-      rescue => e
-        Result.error("Network error: #{e.message}")
+      if response.success?
+        data = response.body
+        formatted_response = ctx[:handler].send(:format_response, data)
+        PachcaHandlers::Result.success(formatted_response)
+      else
+        PachcaHandlers::Result.error("Failed to fetch data: HTTP #{response.status}")
       end
+    rescue StandardError => e
+      PachcaHandlers::Result.error("Network error: #{e.message}")
     end
   end
 
@@ -29,9 +28,9 @@ class NetworkHandler < BaseHandler
 
   def format_response(data)
     [
-      "```",
+      '```',
       JSON.pretty_generate(data),
-      "```"
+      '```'
     ].join("\n")
   end
 end

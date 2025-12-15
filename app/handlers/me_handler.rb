@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
-require_relative '../../lib/internal/handlers/base_handler'
+require_relative '../../lib/pachca_handlers/handlers/base_handler'
 
-class MeHandler < BaseHandler
+class MeHandler < PachcaHandlers::Handlers::BaseHandler
   title 'Me'
   command 'me'
 
   step :me do
     intro 'This is the Me handler. It will return information about the current user.'
     callback do |ctx|
-      response = PachcaClient.new.get("users/#{ctx[:params]['user_id']}")
+      response = PachcaHandlers::Integrations::PachcaClient.new.get("users/#{ctx[:params]['user_id']}")
       formatted_data = ctx[:handler].send(:format_user_data, response.body['data'])
-      Result.success(formatted_data)
+      PachcaHandlers::Result.success(formatted_data)
     end
   end
 

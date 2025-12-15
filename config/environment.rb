@@ -5,12 +5,8 @@ require 'dotenv/load'
 require_relative 'database'
 require 'i18n'
 
-%w[
-  ./lib/internal/handlers/*.rb
-  ./lib/internal/tools/*.rb
-  ./app/handlers/**/*.rb
-  ./app/tools/**/*.rb
-].each { |path| Dir[path].sort.each { |file| require file } }
+require_relative '../lib/pachca_handlers/loader'
+PachcaHandlers::Loader.load!
 
 # I18n
 I18n.load_path << Dir[File.join(__dir__, './locales.yml')]

@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../lib/internal/steps_data_manager'
-require_relative '../lib/internal/chat_data_manager'
+require 'sequel'
+require_relative '../lib/pachca_handlers/flow/steps_data_manager'
+require_relative '../lib/pachca_handlers/assistant/chat_data_manager'
 
 class Session < Sequel::Model
   STATUSES = {
@@ -22,7 +23,7 @@ class Session < Sequel::Model
   end
 
   def steps_data_manager
-    @steps_data_manager ||= StepsDataManager.new(self)
+    @steps_data_manager ||= PachcaHandlers::Flow::StepsDataManager.new(self)
   end
 
   def initialize_steps_data!
@@ -32,13 +33,14 @@ class Session < Sequel::Model
   end
 
   def chat_data_manager
-    @chat_data_manager ||= ChatDataManager.new(self)
+    @chat_data_manager ||= PachcaHandlers::Assistant::ChatDataManager.new(self)
   end
 
-  def initialize_chat_data!
+  def initialize_chat_data!(system_prompt: nil)
     return if chat_data != '{}'
 
-    chat_data_manager.add_message(role: 'system', content: I18n.t('instructions.assistant'))
+    prompt = system_prompt || I18n.t('instructions.assistant')
+    chat_data_manager.add_message(role: 'system', content: prompt)
   end
 
   def valid_user?(user_id)

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require_relative '../../../lib/internal/events/message_event'
+require_relative '../../../lib/pachca_handlers/webhook/message_event'
 
-RSpec.describe MessageEvent do
+RSpec.describe PachcaHandlers::Webhook::MessageEvent do
   let(:params) do
     {
       'event' => 'new',
@@ -18,7 +18,7 @@ RSpec.describe MessageEvent do
   end
 
   describe 'attributes' do
-    let(:event) { MessageEvent.new(params) }
+    let(:event) { described_class.new(params) }
 
     it 'returns the type of the event' do
       expect(event.type).to eq('message')

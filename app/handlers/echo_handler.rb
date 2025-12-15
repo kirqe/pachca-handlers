@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../lib/internal/handlers/base_handler'
+require_relative '../../lib/pachca_handlers/handlers/base_handler'
 
-class EchoHandler < BaseHandler
+class EchoHandler < PachcaHandlers::Handlers::BaseHandler
   title 'Echo'
   command 'echo'
 
@@ -16,7 +16,7 @@ class EchoHandler < BaseHandler
         ->(value) { [value.length <= 3, 'Message cannot be longer than 3 characters'] }
       ]
       callback do |ctx|
-        Result.success("Echo: #{ctx[:value]}")
+        PachcaHandlers::Result.success("Echo: #{ctx[:value]}")
       end
     end
     callback { nil }

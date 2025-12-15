@@ -1,24 +1,27 @@
 # frozen_string_literal: true
 
 require_relative 'event'
-require_relative 'message_event_processor'
 
-class MessageEvent < Event
-  def content
-    @params['content']
-  end
+module PachcaHandlers
+  module Webhook
+    class MessageEvent < Event
+      def content
+        @params['content']
+      end
 
-  def command
-    return unless content&.start_with?('/')
+      def command
+        return unless content&.start_with?('/')
 
-    content.split[0].sub('/', '')
-  end
+        content.split[0].sub('/', '')
+      end
 
-  def command?
-    !!command
-  end
+      def command?
+        !!command
+      end
 
-  def processor_class
-    MessageEventProcessor
+      def processor_class
+        PachcaHandlers::Webhook::MessageEventProcessor
+      end
+    end
   end
 end

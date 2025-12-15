@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../lib/internal/handlers/base_handler'
+require_relative '../../lib/pachca_handlers/handlers/base_handler'
 
-class CoffeeHandler < BaseHandler
+class CoffeeHandler < PachcaHandlers::Handlers::BaseHandler
   title 'Coffee Order'
   command 'coffee'
 
@@ -41,7 +41,7 @@ class CoffeeHandler < BaseHandler
       drink = ctx.get_field_value(:choose_drink, :drink)
       extra = ctx.get_field_value(:extras, :extra)
       name = ctx.get_field_value(:name, :customer_name)
-      Result.success("Here's your drink: #{drink} with #{extra} for #{name}")
+      PachcaHandlers::Result.success("Here's your drink: #{drink} with #{extra} for #{name}")
     end
   end
 end

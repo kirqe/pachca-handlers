@@ -10,10 +10,22 @@ Or check `Dockerfile`
 
 ## Adding handlers
 
-User defined handlers go to `lib/handlers`, custom clients - `lib/clients`
+User-defined handlers go to `app/handlers`. LLM tools (optional) go to `app/tools`.
+
+## Assistant profiles (optional)
+
+The `/ask` command runs the assistant. You can add additional assistant commands by creating more handlers with `assistant true` and configuring:
+
+- `system_prompt` / `system_prompt_i18n` (the assistant instructions)
+- `tools` (allowlist of tool class names, e.g. `BrowseWeb`, `CloseSession`). If omitted, assistant handlers default to `CloseSession` only.
+
+Examples:
+
+- `/ask hello`
+- `/research summarize https://example.com`
 
 ```ruby
-class EchoHandler < BaseHandler
+class EchoHandler < PachcaHandlers::Handlers::BaseHandler
   title 'Echo'
   command 'echo'
 
@@ -26,9 +38,7 @@ class EchoHandler < BaseHandler
         ->(value) { [!value.empty?, 'Message cannot be empty'] },
         ->(value) { [value.length <= 3, 'Message cannot be longer than 3 characters'] }
       ]
-      callback { |ctx|
-        Result.success("Echo: #{ctx[:value]}")
-      }
+      callback { |ctx| PachcaHandlers::Result.success("Echo: #{ctx[:value]}") }
     end
   end
 end

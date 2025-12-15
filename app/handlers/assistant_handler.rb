@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../internal/handlers/base_handler'
-require_relative '../services/assistant'
+require_relative '../../lib/internal/handlers/base_handler'
 
 class AssistantHandler < BaseHandler
   title 'Assistant'

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../internal/clients/llm_client'
+require_relative '../../../lib/internal/clients/llm_client'
 
 module Summarizer
   MAX_TOKENS = 25_000

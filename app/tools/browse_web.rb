@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../internal/tools/base_tool'
-require_relative '../internal/clients/base_client'
+require_relative '../../lib/internal/tools/base_tool'
+require_relative '../../lib/internal/clients/base_client'
 require_relative 'shared/summarizer'
 require_relative 'shared/text_extractor'
 

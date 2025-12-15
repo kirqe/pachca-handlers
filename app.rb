@@ -2,9 +2,8 @@
 
 require 'roda'
 
-require_relative 'lib/internal/events/event_factory'
-require_relative 'lib/internal/processors/event_processor_factory'
 require_relative 'lib/middleware/signature_check_middleware'
+require_relative 'lib/pachca_handlers/webhook/endpoint'
 
 class App < Roda
   use SignatureCheckMiddleware
@@ -25,8 +24,7 @@ class App < Roda
       r.on 'v1' do
         r.on 'webhook' do
           r.post do
-            event = EventFactory.create(r.params)
-            EventProcessorFactory.create(event).process
+            PachcaHandlers::Webhook::Endpoint.new.call(r.params)
 
             r.halt 204
           end

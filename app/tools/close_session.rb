@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../internal/tools/base_tool'
+require_relative '../../lib/internal/tools/base_tool'
 
 class CloseSession < BaseTool
   required :context, String, doc: 'Context whether session with user can be closed'

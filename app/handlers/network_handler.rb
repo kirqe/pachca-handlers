@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../internal/handlers/base_handler'
+require_relative '../../lib/internal/handlers/base_handler'
+require_relative '../../lib/internal/clients/base_client'
 
 class NetworkHandler < BaseHandler
   title 'Network Call'

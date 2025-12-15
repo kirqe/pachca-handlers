@@ -1,17 +1,4 @@
 # frozen_string_literal: true
 
-class ToolsRegistry
-  @tools = {}
+require_relative '../pachca_handlers/registry/tools_registry'
 
-  def self.register(tool, name)
-    @tools[name.to_sym] = tool
-  end
-
-  def self.get(name)
-    @tools[name.to_sym]
-  end
-
-  def self.all
-    @tools
-  end
-end

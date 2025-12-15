@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../../internal/events/event_factory'
-require_relative '../../internal/processors/event_processor_factory'
+require_relative 'event_factory'
+require_relative 'event_processor_factory'
 
 module PachcaHandlers
   module Webhook
@@ -13,4 +13,3 @@ module PachcaHandlers
     end
   end
 end
-

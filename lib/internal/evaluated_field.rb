@@ -1,21 +1,4 @@
 # frozen_string_literal: true
 
-require_relative 'callback_context'
+require_relative '../pachca_handlers/flow/evaluated_field'
 
-module EvaluatedField
-  def evaluated_field(name, context = {})
-    val = public_send(name)
-    return unless val
-
-    if val.is_a?(Proc)
-      if val.arity.zero?
-        val.call
-      else
-        ctx = CallbackContext.new(context)
-        val.call(ctx)
-      end
-    else
-      val
-    end
-  end
-end

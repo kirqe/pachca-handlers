@@ -1,18 +1,4 @@
 # frozen_string_literal: true
 
-require_relative 'event'
-require_relative 'message_event'
-require_relative 'button_event'
+require_relative '../../pachca_handlers/webhook/event_factory'
 
-class EventFactory
-  def self.create(params)
-    case params['type']
-    when 'message'
-      MessageEvent.new(params)
-    when 'button'
-      ButtonEvent.new(params)
-    else
-      Event.new(params)
-    end
-  end
-end

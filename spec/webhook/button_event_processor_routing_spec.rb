@@ -29,13 +29,13 @@ RSpec.describe PachcaHandlers::Webhook::ButtonEventProcessor do
   end
 
   it 'ignores field click when no active session' do
-    event = double('Event', data: 'field:echo:one:message:Hi', params: {}, user_id: 1)
+    event = instance_double('Event', command?: false, field?: true, field_payload: { command: 'echo' }, params: {},
+                                     user_id: 1)
     session_service = double('SessionService', find_session: nil)
     session_flow = double('SessionFlow')
     message_service = double('MessageService')
 
-    expect(session_flow).not_to receive(:start)
-    expect(session_flow).not_to receive(:deliver_callback_output)
+    expect(session_flow).not_to receive(:handle_button_result)
 
     build_processor(
       event: event,
@@ -47,13 +47,13 @@ RSpec.describe PachcaHandlers::Webhook::ButtonEventProcessor do
 
   it 'ignores field click when session user mismatch' do
     session = double('Session', valid_user?: false)
-    event = double('Event', data: 'field:echo:one:message:Hi', params: {}, user_id: 1)
+    event = instance_double('Event', command?: false, field?: true, field_payload: { command: 'echo' }, params: {},
+                                     user_id: 1)
     session_service = double('SessionService', find_session: session)
     session_flow = double('SessionFlow')
     message_service = double('MessageService')
 
-    expect(session_flow).not_to receive(:start)
-    expect(session_flow).not_to receive(:deliver_callback_output)
+    expect(session_flow).not_to receive(:handle_button_result)
 
     build_processor(
       event: event,
@@ -65,12 +65,19 @@ RSpec.describe PachcaHandlers::Webhook::ButtonEventProcessor do
 
   it 'ignores field click when payload command mismatches active session command' do
     session = double('Session', valid_user?: true, command: 'coffee')
-    event = double('Event', data: 'field:echo:one:message:Hi', params: {}, user_id: 1)
+    event = instance_double(
+      'Event',
+      command?: false,
+      field?: true,
+      field_payload: { command: 'echo', step_key: :one, field_key: :message, value: 'Hi' },
+      params: {},
+      user_id: 1
+    )
     session_service = double('SessionService', find_session: session)
     session_flow = double('SessionFlow')
     message_service = double('MessageService')
 
-    expect(session_flow).not_to receive(:start)
+    expect(session_flow).not_to receive(:handle_button_result)
 
     build_processor(
       event: event,
@@ -93,7 +100,15 @@ RSpec.describe PachcaHandlers::Webhook::ButtonEventProcessor do
     end
 
     session = double('Session', valid_user?: true, command: 'echo')
-    event = double('Event', data: 'field:echo:one:message:Hi', params: {}, user_id: 1)
+    event = instance_double(
+      'Event',
+      data: 'field:echo:one:message:Hi',
+      params: {},
+      user_id: 1,
+      command?: false,
+      field?: true,
+      field_payload: { command: 'echo', step_key: :one, field_key: :message, value: 'Hi' }
+    )
     session_service = double('SessionService', find_session: session)
     session_flow = double('SessionFlow')
     message_service = double('MessageService')
@@ -102,11 +117,9 @@ RSpec.describe PachcaHandlers::Webhook::ButtonEventProcessor do
     allow(PachcaHandlers::Flow::ButtonNavigator).to receive(:new).and_return(navigator)
     allow(PachcaHandlers::Registry::HandlersRegistry).to receive(:get).with('echo').and_return(handler_class)
 
-    allow(navigator).to receive(:parse_payload).and_return(['field', 'echo', :one, :message, 'Hi'])
     allow(navigator).to receive(:handle_field_click).and_return(:restart)
 
-    expect(session_flow).to receive(:start)
-    expect(session_flow).not_to receive(:deliver_callback_output)
+    expect(session_flow).to receive(:handle_button_result).with(out: :restart, step_key: :one)
 
     build_processor(
       event: event,
@@ -129,7 +142,15 @@ RSpec.describe PachcaHandlers::Webhook::ButtonEventProcessor do
     end
 
     session = double('Session', valid_user?: true, command: 'echo')
-    event = double('Event', data: 'field:echo:one:message:Hi', params: {}, user_id: 1)
+    event = instance_double(
+      'Event',
+      data: 'field:echo:one:message:Hi',
+      params: {},
+      user_id: 1,
+      command?: false,
+      field?: true,
+      field_payload: { command: 'echo', step_key: :one, field_key: :message, value: 'Hi' }
+    )
     session_service = double('SessionService', find_session: session)
     session_flow = double('SessionFlow')
     message_service = double('MessageService')
@@ -138,13 +159,11 @@ RSpec.describe PachcaHandlers::Webhook::ButtonEventProcessor do
     allow(PachcaHandlers::Flow::ButtonNavigator).to receive(:new).and_return(navigator)
     allow(PachcaHandlers::Registry::HandlersRegistry).to receive(:get).with('echo').and_return(handler_class)
 
-    allow(navigator).to receive(:parse_payload).and_return(['field', 'echo', :one, :message, 'Hi'])
     allow(navigator).to receive(:handle_field_click).and_return('ok')
 
     allow(handler_class).to receive(:steps).and_return([])
 
-    expect(session_flow).to receive(:deliver_callback_output).with('ok')
-    expect(session_flow).to receive(:start)
+    expect(session_flow).to receive(:handle_button_result).with(out: 'ok', step_key: :one)
 
     build_processor(
       event: event,

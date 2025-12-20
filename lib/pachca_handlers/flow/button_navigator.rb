@@ -7,15 +7,9 @@ require_relative 'steps_data_manager'
 module PachcaHandlers
   module Flow
     class ButtonNavigator
-      def initialize(session:, handler_class:, message_service:)
+      def initialize(session:, handler_class:)
         @session = session
         @handler_class = handler_class
-        @message_service = message_service
-      end
-
-      def parse_payload(data)
-        verb, command, step_key, field_key, value = data.split(':', 5)
-        [verb, command, step_key.to_sym, field_key.to_sym, CGI.unescape(value.to_s)]
       end
 
       def handle_field_click(step_key:, field_key:, value:, event_params:)

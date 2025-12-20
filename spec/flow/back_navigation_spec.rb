@@ -99,8 +99,7 @@ RSpec.describe 'Back navigation' do
     session.steps_data_manager.prepare!
     session.steps_data_manager.update_field!(:one, :name, 'Alice')
 
-    navigator = PachcaHandlers::Flow::ButtonNavigator.new(session: session, handler_class: handler_class,
-                                                          message_service: nil)
+    navigator = PachcaHandlers::Flow::ButtonNavigator.new(session: session, handler_class: handler_class)
     expect(navigator.go_back_to(:one, :name)).to eq(:restart)
     expect(session.steps_data_manager.field(:one, :name)[:visited]).to eq(false)
   end

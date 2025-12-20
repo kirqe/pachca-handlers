@@ -78,6 +78,17 @@ module PachcaHandlers
         output
       end
 
+      def handle_button_result(out:, step_key:)
+        return start if out == :restart
+
+        deliver_callback_output(out) if out
+
+        output = complete_step_if_needed(step_key)
+        return if output&.restart?
+
+        start
+      end
+
       private
 
       def session
@@ -165,6 +176,14 @@ module PachcaHandlers
                                                  step_key: step.key,
                                                  field_key: field.key })
         deliver_callback_output(out)
+      end
+
+      def complete_step_if_needed(step_key)
+        handler_class = PachcaHandlers::Registry::HandlersRegistry.get(session.command)
+        current_step = handler_class.steps.find { |s| s.key.to_sym == step_key.to_sym }
+        return unless current_step&.complete?(session)
+
+        complete_step(current_step)
       end
 
       def complete_session

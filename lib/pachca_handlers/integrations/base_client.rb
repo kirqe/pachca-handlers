@@ -39,6 +39,10 @@ module PachcaHandlers
         def get(url, params = {})
           new(URI(url)).get('', params)
         end
+
+        def post(url, body = {}, headers: {})
+          new(URI(url), headers).post('', body)
+        end
       end
 
       private

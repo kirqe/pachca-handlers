@@ -134,6 +134,8 @@ module PachcaHandlers
       def handle_no_more_fields
         handler_class = PachcaHandlers::Registry::HandlersRegistry.get(session.command)
         handler_class.steps.each do |step|
+          next if session.steps_data_manager.skip_step?(step)
+
           step_obj = session.steps_data_manager.step(step.key)
           next if step_obj[:step_completed] || step_obj[:skipped]
           next unless step.fields.empty?

@@ -48,8 +48,10 @@ module PachcaHandlers
         @data.to_json(*)
       end
 
-      def next_field(handler_class:)
+      def next_field(handler_class:, skip_step: nil)
         handler_class.steps.each do |step|
+          next if skip_step&.call(step)
+
           step_obj = step(step.key)
           next if step_completed?(step_obj)
 

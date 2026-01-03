@@ -29,14 +29,31 @@ module PachcaHandlers
 
       def set_field(field_key, value)
         @handler.session.steps_data_manager.update_field!(@step_key, field_key, value)
+        nil
       end
 
       def get_field_value(step_key, field_key)
         @handler.session.steps_data_manager.field_value(step_key, field_key)
       end
 
+      def skip_step(step_key = @step_key)
+        @handler.session.steps_data_manager.update_step!(step_key, :skipped, true)
+        nil
+      end
+
+      def unskip_step(step_key = @step_key)
+        @handler.session.steps_data_manager.update_step!(step_key, :skipped, false)
+        nil
+      end
+
+      def reset_field(step_key, field_key)
+        @handler.session.steps_data_manager.reset_field!(step_key, field_key)
+        nil
+      end
+
       def complete_step
         @handler.session.steps_data_manager.update_step!(@step_key, :step_completed, true)
+        nil
       end
     end
   end

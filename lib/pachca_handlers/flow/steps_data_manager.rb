@@ -80,7 +80,7 @@ module PachcaHandlers
       end
 
       def next_field
-        steps_data.next_field(handler_class: handler_class)
+        steps_data.next_field(handler_class: handler_class, skip_step: method(:skip_step?))
       end
 
       def field_filled?(step_key, field_key)
@@ -156,10 +156,22 @@ module PachcaHandlers
                                         current_field: current_field)
       end
 
+      def skip_step?(step)
+        predicate = step.skip_if
+        return false unless predicate
+
+        ctx = { params: {}, handler: handler_instance, step: step }
+        !!step.evaluated_field(:skip_if, ctx)
+      end
+
       private
 
       def steps_data
         @steps_data ||= PachcaHandlers::Flow::StepsData.parse(@session.steps_data, command_key: @command_key)
+      end
+
+      def handler_instance
+        @handler_instance ||= handler_class.new(session: @session, params: {})
       end
     end
   end

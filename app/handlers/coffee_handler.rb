@@ -12,6 +12,14 @@ class CoffeeHandler < PachcaHandlers::Handlers::BaseHandler
       name 'Drink'
       description 'Choose your drink'
       options %w[Tea Coffee]
+      callback do |ctx|
+        if ctx[:value] == 'Tea'
+          ctx.skip_step(:extras)
+          ctx.reset_field(:extras, :extra)
+        else
+          ctx.unskip_step(:extras)
+        end
+      end
     end
   end
 
@@ -41,7 +49,9 @@ class CoffeeHandler < PachcaHandlers::Handlers::BaseHandler
       drink = ctx.get_field_value(:choose_drink, :drink)
       extra = ctx.get_field_value(:extras, :extra)
       name = ctx.get_field_value(:name, :customer_name)
-      PachcaHandlers::Result.success("Here's your drink: #{drink} with #{extra} for #{name}")
+
+      extras_text = extra ? " with #{extra}" : ''
+      PachcaHandlers::Result.success("Here's your drink: #{drink}#{extras_text} for #{name}")
     end
   end
 end

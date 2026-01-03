@@ -27,6 +27,12 @@ module PachcaHandlers
         @callback = proc || block
       end
 
+      def skip_if(proc = nil, &block)
+        return @skip_if unless proc || block_given?
+
+        @skip_if = proc || block
+      end
+
       def field(key, &block)
         f = Field.new(key: key)
         f.instance_eval(&block) if block

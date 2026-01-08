@@ -9,13 +9,12 @@ class NetworkHandler < PachcaHandlers::Handlers::BaseHandler
   command 'network'
 
   step :api_call do
-    callback do |ctx|
+    callback do
       response = PachcaHandlers::Integrations::BaseClient.get('https://jsonplaceholder.typicode.com/posts/1')
 
       if response.success?
         data = response.body
-        formatted_response = ctx[:handler].send(:format_response, data)
-        PachcaHandlers::Result.success(formatted_response)
+        PachcaHandlers::Result.success(format_response(data))
       else
         PachcaHandlers::Result.error("Failed to fetch data: HTTP #{response.status}")
       end

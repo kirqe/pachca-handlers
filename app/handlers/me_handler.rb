@@ -10,8 +10,7 @@ class MeHandler < PachcaHandlers::Handlers::BaseHandler
     intro 'This is the Me handler. It will return information about the current user.'
     callback do |ctx|
       response = PachcaHandlers::Integrations::PachcaClient.new.get("users/#{ctx[:params]['user_id']}")
-      formatted_data = ctx[:handler].send(:format_user_data, response.body['data'])
-      PachcaHandlers::Result.success(formatted_data)
+      PachcaHandlers::Result.success(format_user_data(response.body['data']))
     end
   end
 

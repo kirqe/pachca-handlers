@@ -10,11 +10,12 @@ module PachcaHandlers
         return unless val
 
         if val.is_a?(Proc)
+          handler = context[:handler]
           if val.arity.zero?
-            val.call
+            handler ? handler.instance_exec(&val) : val.call
           else
             ctx = CallbackContext.new(context)
-            val.call(ctx)
+            handler ? handler.instance_exec(ctx, &val) : val.call(ctx)
           end
         else
           val

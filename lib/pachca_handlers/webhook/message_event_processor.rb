@@ -7,7 +7,7 @@ require_relative '../registry/handlers_registry'
 module PachcaHandlers
   module Webhook
     class MessageEventProcessor < EventProcessor
-      def process
+      def process!
         return handle_command(@event.command) if @event.command?
 
         # TODO: ref. key in session?

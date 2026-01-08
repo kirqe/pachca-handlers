@@ -13,6 +13,19 @@ module PachcaHandlers
       end
 
       def process
+        process!
+      rescue StandardError => e
+        log_exception(e) if log_exceptions?
+
+        begin
+          @message_service.deliver(I18n.t('messages.something_went_wrong'))
+        rescue StandardError
+          nil
+        end
+        nil
+      end
+
+      def process!
         raise NotImplementedError
       end
 
@@ -57,6 +70,21 @@ module PachcaHandlers
 
       def handle_unknown_command
         @message_service.deliver(I18n.t('messages.command_not_found'))
+      end
+
+      private
+
+      def log_exceptions?
+        return false if ENV['RACK_ENV'] == 'test'
+        return false if ENV['APP_ENV'] == 'test'
+        return false if defined?(RSpec)
+
+        true
+      end
+
+      def log_exception(error)
+        warn "#{error.class}: #{error.message}"
+        warn error.backtrace.join("\n") if error.backtrace
       end
     end
   end

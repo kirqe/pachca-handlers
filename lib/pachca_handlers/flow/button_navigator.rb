@@ -7,9 +7,10 @@ require_relative 'steps_data_manager'
 module PachcaHandlers
   module Flow
     class ButtonNavigator
-      def initialize(session:, handler_class:)
+      def initialize(session:, handler_class:, message_service: nil)
         @session = session
         @handler_class = handler_class
+        @message_service = message_service
       end
 
       def handle_field_click(step_key:, field_key:, value:, event_params:)
@@ -24,6 +25,7 @@ module PachcaHandlers
         out = field.evaluated_field(:callback, {
                                       params: event_params,
                                       handler: @handler_class.new(session: @session, params: event_params),
+                                      message_service: @message_service,
                                       step: step,
                                       value: value,
                                       step_key: step.key,

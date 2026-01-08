@@ -36,8 +36,8 @@ module PachcaHandlers
       end
 
       class << self
-        def get(url, params = {})
-          new(URI(url)).get('', params)
+        def get(url, params = {}, headers: {})
+          new(URI(url), headers).get('', params)
         end
 
         def post(url, body = {}, headers: {})

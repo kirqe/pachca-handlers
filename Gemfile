@@ -2,7 +2,9 @@
 
 source 'https://rubygems.org'
 
+gem 'csv'
 gem 'faraday'
+gem 'faraday-multipart'
 gem 'faraday-retry'
 gem 'i18n', '~> 1.14', '>= 1.14.1'
 gem 'nokogiri'

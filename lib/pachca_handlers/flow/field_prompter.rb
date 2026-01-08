@@ -60,6 +60,10 @@ module PachcaHandlers
 
       def build_confirmation_message(step:, field:)
         previous_value = @session.steps_data_manager.previous_field_value(step, field)
+        if previous_value.is_a?(Hash)
+          display = previous_value[:name] || previous_value['name'] || previous_value[:key] || previous_value['key']
+          return I18n.t('messages.field_selected', value: display) if display
+        end
         return I18n.t('messages.field_selected', value: previous_value) if previous_value
 
         I18n.t('messages.field_completed')

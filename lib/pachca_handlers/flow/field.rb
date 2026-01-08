@@ -13,6 +13,7 @@ module PachcaHandlers
         @key = key
         @validations = []
         @errors = []
+        @input_type = :text
       end
 
       def name(value = nil)
@@ -25,6 +26,13 @@ module PachcaHandlers
         return @description unless value
 
         @description = value
+      end
+
+      # :text (default), :file (single attachment), :files (multiple attachments)
+      def input(value = nil)
+        return @input_type unless value
+
+        @input_type = value.to_sym
       end
 
       def validations(value = nil)

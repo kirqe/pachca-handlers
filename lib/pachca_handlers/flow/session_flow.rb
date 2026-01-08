@@ -3,6 +3,7 @@
 require_relative '../registry/handlers_registry'
 require_relative 'output'
 require_relative 'field_prompter'
+require_relative 'input_value_extractor'
 
 module PachcaHandlers
   module Flow
@@ -29,27 +30,42 @@ module PachcaHandlers
       end
 
       def handle_field_input(step, field)
-        field.validate(@event.content)
-        if field.valid?
-          output = fill_field(step, field)
+        value = input_extractor.value_for(field)
+        error = input_extractor.missing_input_error(field, value)
+        return deliver_invalid_input(error) if error
+
+        field.validate(value)
+        return deliver_validation_error(field) unless field.valid?
+
+        handle_valid_input(step: step, field: field, value: value)
+      end
+
+      def deliver_invalid_input(error)
+        @message_service.deliver(I18n.t('messages.invalid_input', error: error.to_s))
+      end
+
+      def deliver_validation_error(field)
+        @message_service.deliver(I18n.t('messages.invalid_input', error: field.errors.join(', ')))
+      end
+
+      def handle_valid_input(step:, field:, value:)
+        output = fill_field(step, field, value)
+        return if output&.restart?
+
+        if step.complete?(session)
+          output = complete_step(step)
           return if output&.restart?
-
-          if step.complete?(session)
-            output = complete_step(step)
-            return if output&.restart?
-          end
-
-          advance(mode: :prompt)
-        else
-          @message_service.deliver(I18n.t('messages.invalid_input', error: field.errors.join(', ')))
         end
+
+        advance(mode: :prompt)
       end
 
       def complete_step(step)
         session.steps_data_manager.update_step!(step.key, :step_completed, true)
         out = step.evaluated_field(:callback, { params: @event.params,
                                                 handler: handler,
-                                                step: step })
+                                                step: step,
+                                                message_service: @message_service })
         deliver_callback_output(out)
       end
 
@@ -158,7 +174,8 @@ module PachcaHandlers
       def show_intro(step)
         intro = step.evaluated_field(:intro, { params: @event.params,
                                                handler: handler,
-                                               step: step })
+                                               step: step,
+                                               message_service: @message_service })
         @message_service.deliver(I18n.t('messages.step_intro', message: intro))
         session.steps_data_manager.update_step!(step.key, :intro_shown, true)
       end
@@ -168,15 +185,15 @@ module PachcaHandlers
         step_obj[:intro_shown]
       end
 
-      def fill_field(step, field)
-        value = @event.content
+      def fill_field(step, field, value)
         session.steps_data_manager.update_field!(step.key, field.key, value)
         out = field.evaluated_field(:callback, { params: @event.params,
                                                  handler: handler,
                                                  step: step,
                                                  value: value,
                                                  step_key: step.key,
-                                                 field_key: field.key })
+                                                 field_key: field.key,
+                                                 message_service: @message_service })
         deliver_callback_output(out)
       end
 
@@ -202,6 +219,13 @@ module PachcaHandlers
 
       def prompter
         @prompter ||= PachcaHandlers::Flow::FieldPrompter.new(session: session, message_service: @message_service)
+      end
+
+      def input_extractor
+        @input_extractor ||= PachcaHandlers::Flow::InputValueExtractor.new(
+          event: @event,
+          message_service: @message_service
+        )
       end
     end
   end

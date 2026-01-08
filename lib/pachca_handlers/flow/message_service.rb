@@ -8,15 +8,20 @@ module PachcaHandlers
         @client = client
       end
 
-      def deliver(message, buttons = [])
+      def fetch_message(message_id)
+        response = @client.get_message(message_id)
+        response.body&.dig('data')
+      end
+
+      def deliver(message, buttons = [], files: [])
         sleep 0.1
-        payload = build_message_payload(message, buttons)
+        payload = build_message_payload(message, buttons, files: files)
         @client.create_message(payload)
       end
 
-      def deliver_with_id(message, buttons = [])
+      def deliver_with_id(message, buttons = [], files: [])
         sleep 0.1
-        payload = build_message_payload(message, buttons)
+        payload = build_message_payload(message, buttons, files: files)
         response = @client.create_message(payload)
         response.body.dig('data', 'id')
       end
@@ -42,13 +47,16 @@ module PachcaHandlers
 
       private
 
-      def build_message_payload(message, buttons)
-        { message: {
+      def build_message_payload(message, buttons, files:)
+        message_hash = {
           entity_type: @event.entity_type,
           entity_id: @event.entity_id,
           content: message,
           buttons: buttons
-        } }
+        }
+        message_hash[:files] = files if files&.any?
+
+        { message: message_hash }
       end
     end
   end
